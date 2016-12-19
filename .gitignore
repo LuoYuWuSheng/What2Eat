@@ -224,3 +224,8 @@ jspm_packages
 # Yarn Integrity file
 .yarn-integrity
 
+####  mydefine ####
+
+.idea/markdown-navigator.xml
+.idea/markdown-navigator/
+.idea/
