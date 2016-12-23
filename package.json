@@ -17,6 +17,9 @@
     "pug":"2.0.0-beta6",
     "ejs": "2.5.2",
     "superagent":"3.2.1",
-    "mongodb":"~2.2.16"
+    "mongodb":"~2.2.16",
+
+    "cheerio":"0.22.0"
+
   }
 }

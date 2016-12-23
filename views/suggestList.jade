@@ -1,0 +1,18 @@
+//
+   Created by xd on 2016/12/21.
+extends layout
+block content
+    h1 推荐列表
+    - console.log(JSON.stringify(foodList));
+    table(class="table")
+        tr
+            td 名字
+            td 描述
+            td 图片1
+            td 图片2
+        - for (var i=0;i<foodList.length;i++)
+            tr
+                td #{foodList[i].name}
+                td #{foodList[i].describe}
+                td <img src="/images/db/#{foodList[i].image[0]}" />
+                td <img src="/images/db/#{foodList[i].image[1]}" />
