@@ -1,0 +1,18 @@
+//
+   Created by xd on 2016/12/23.
+extends layout
+block content
+    h1 爬虫网页，爬取并修改信息
+    table(class="table")
+        tr
+            td 名字
+            td 描述
+            td 图片1
+            td 图片2
+            td 好处
+        tr
+            td #{food.name}
+            td #{food.describe}
+            td <img src="/images/db/#{food.image[0]}" />
+            td <img src="/images/db/#{food.image[1]}" />
+            td #{food.benefit}

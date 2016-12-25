@@ -5,7 +5,8 @@
 
 function Condition() {
     this.weather = "";
-    this.season ="";
+    this.season = "";
+    this.healthCondition = "";
     //默认人数是1
     this.people = 1;
     this.sex = "";
@@ -15,12 +16,26 @@ function Condition() {
 
 Condition.prototype = {
     //是否是单人餐
-    single:function () {
-        if(this.people == 1)return true;
+    single: function () {
+        if (this.people == 1)return true;
         else return false;
     },
-    peopleFilter:function () {
-        switch (this.people){
+    healthConditionFilter: function () {
+        switch (this.healthCondition){
+            case "精神好":
+            case "萌萌哒":
+            case "小病初愈":
+            case "想吃肉":
+            case "长痘":
+            case "饿好几天了":
+                return {$in: [this.healthCondition]};
+            //    todo 默认精神好
+            default :
+                return {$in:["精神好"]};
+        }
+    },
+    peopleFilter: function () {
+        switch (this.people) {
             case -2:
                 return -2;
             case -1:
@@ -32,19 +47,19 @@ Condition.prototype = {
             case 2:
                 return 2;
             default:
-                return {$gt:2};
+                return {$gt: 2};
         }
     },
-    sexFilter : function () {
-        if(this.sex == "男")
-            return {$lt:1};
-        else return {$gt:-1};
+    sexFilter: function () {
+        if (this.sex == "男")
+            return {$lt: 1};
+        else return {$gt: -1};
     },
     tasteFilter: function () {
-        return {$in:[this.taste]};
+        return {$in: [this.taste]};
     },
-    timeFilter : function () {
-        return {$in:[this.time]};
+    timeFilter: function () {
+        return {$in: [this.time]};
     }
 };
 

@@ -34,7 +34,8 @@ function findSuggest(condition,callback) {
         "tags.taste":condition.tasteFilter(),
         "tags.people":condition.peopleFilter(),
         "tags.sex":condition.sexFilter(),
-        "tags.time":condition.timeFilter()
+        "tags.time":condition.timeFilter(),
+        "HealthCondition":condition.healthConditionFilter()
     };
     var result = [];
     MongoClient.FoodsColl.find(Filter).toArray(function (err,docs) {
@@ -61,7 +62,8 @@ function suggestByWeather(condition,callback) {
         "tags.taste":condition.tasteFilter(),
         "tags.people":condition.peopleFilter(),
         "tags.sex":condition.sexFilter(),
-        "tags.time":condition.timeFilter()
+        "tags.time":condition.timeFilter(),
+        "HealthCondition":condition.healthConditionFilter()
     };
     var result = [];
     MongoClient.db.find(Filter).toArray(function (err,docs) {
@@ -87,7 +89,8 @@ function suggestTreat(callback) {
         "tags.taste":condition.tasteFilter(),
         "tags.people":condition.peopleFilter(),
         "tags.sex":condition.sexFilter(),
-        "tags.time":condition.timeFilter()
+        "tags.time":condition.timeFilter(),
+        "HealthCondition":condition.healthConditionFilter()
     };
     var result = [];
     MongoClient.db.find(Filter).toArray(function (err,docs) {
@@ -108,6 +111,8 @@ var MongoHelper = {
     MongoClient:MongoClient,
     //如果后面加了括号就是调用的意思
     findSuggest:findSuggest,
+    suggestByWeather:suggestByWeather,
+    suggestTreat:suggestTreat,
 };
 
 //将Mongo的client暴露出去

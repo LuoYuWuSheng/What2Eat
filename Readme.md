@@ -59,6 +59,7 @@ db.getCollection('Foods').find({
 {
     weather:"sunny",
     season:"冬"，
+    health: 精神好 萌萌哒 小病初愈 想吃肉 长痘 饿好几天了
     people : -2寝室、 -1 情侣 、0 家庭、1 单人、2两人、3、多人，
     sex : "男"，
     taste : ["咸"],酸甜辣咸鲜

@@ -44,6 +44,8 @@ app.use('/users', users);
 app.use('/food', food);
 var test = require('./routes/test');
 app.use('/test',test);
+var travel = require('./spider/travelRoute');
+app.use('/travel',travel);
 //=================================end UrlMapping==================================
 
 // catch 404 and forward to error handler

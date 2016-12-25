@@ -10,9 +10,9 @@ function SuggestFood(doc) {
         this.describe = doc.describe;
         this.benefit = doc.benefit;
     }else {
-        this.id = "123";
-        this.name = "火锅";
-        this.image = "#";
+        this.id = "";
+        this.name = "";
+        this.image = "";
         this.describe = "";
         this.benefit = "";
     }
