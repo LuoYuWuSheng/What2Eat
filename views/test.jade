@@ -1,6 +1,8 @@
 //
    Created by xd on 2016/12/21.
 extends layout
+block moreHead
+    script(src='/javascripts/ajax.js',type='text/javascript')
 block content
     form(action="/test/",method="get")
         input(name="kkk",type="text")

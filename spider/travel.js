@@ -6,33 +6,70 @@
 //爬虫程序，从美食杰爬取数据
 var cheerio = require('cheerio');
 var http = require('http');
+var url = require('url');
+
 var MaxDataNum = 100;
-// var pageUrl = 'http://www.meishij.net/zuofa/heifashimakalong_1.html';
-var pageUrl = 'http://www.meishij.net/zuofa/heifashimakalong_1.html';
+var MSJUrl = 'http://www.meishij.net/zuofa/yingtaorou_7.html';
+var pageUrl = 'http://blog.csdn.net/yezhenxu1992/article/details/50820629';
 var requestHeader = {
-    GET: '/zuofa/yuerji_9.html HTTP/1.1',
-    Host: 'www.meishij.net',
-    Connection: 'keep-alive',
-    "Upgrade-Insecure-Requests": 1,
-    "User-Agent": 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
-    Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-    Referer: 'http://www.meishij.net/zuofa/yuerji_9.html',
-    "Accept-Encoding": 'gzip, deflate, sdch',
-    "Accept-Language": 'zh-CN,zh;q=0.8',
+    portocol:'http:',
+    method:'post',
+    host: 'www.meishij.net',
+    path:'/zuofa/yingtaorou_7.html',
+    headers:{
+        "Upgrade-Insecure-Requests": 1,
+        "Accept": 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+        "Accept-Language": 'zh-CN,zh;q=0.8',
+    }
 };
 
 var SuggestFood = require('../model/SuggestFood');
 
 var travel = {
+    nextUrl:pageUrl,
+    requireTravel:function requireTravel(callback) {
+        // console.log(url.parse(this.nextUrl));
+        var food = new SuggestFood();
+        var request = http.request(MSJUrl,function (res) {
+            var html = '';
+            res.setEncoding('utf-8');
+            res.on('data',function (data) {
+                html+=data;
+            });
+            res.on('end',function () {
+                if(html !== "")console.log("获取页面成功\n"+html);
+                else console.log("获取页面失败");
+                var $ = cheerio.load(html);
+                var divMain = $('div.main_w').children('div.main');
+                var a = divMain.children('div.cp_header')
+                    .children('div.cp_main_info_w')
+                    .children('div.info1')
+                    .children('h1.title')
+                    .children('a');
+                console.log(divMain.html());
+                console.log(a.html());
+                callback(food);
+            });
+        });
+        //todo 这里估计会有问题，无论什么情况都会返回空的food
+        // callback(food);
+        request.on('error',function (e) {
+            console.log('请求失败\n');
+            console.log(Json.stringify(request));
+        });
+
+        request.end();
+    },
     travel:function travelOne(callback) {
         var food = new SuggestFood();
-        http.get(pageUrl,function (res) {
+        http.get(this.nextUrl,function (res) {
             var html = '';
+            res.setEncoding('utf-8');
             res.on('data',function (data) {
               html+=data;
             });
             res.on('end',function () {
-                if(html !== "")console.log("获取页面成功");
+                if(html !== "")console.log("获取页面成功\n"+html);
                 else console.log("获取页面失败");
                   var $ = cheerio.load(html);
                   var divMain = $('div.main_w').children('div.main');

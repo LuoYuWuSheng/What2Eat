@@ -3,6 +3,10 @@
 extends layout
 block content
     h1 爬虫网页，爬取并修改信息
+    form(action='/travel',method='post')
+        p 爬取的url
+        input(type='text',name='url')
+        button 提交
     table(class="table")
         tr
             td 名字

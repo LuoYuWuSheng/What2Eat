@@ -54,6 +54,13 @@ db.getCollection('Foods').find({
     "tags.time":{$in:["n"]}
     })
 ```
+### 前段传入条件
+```
+health: great(精神好) cute(萌萌哒) recover(小病初愈) meat(想吃肉) pox(长痘) hungry(饿好几天了)
+time : morning 早上、midday 中午、pm 、下午茶、evening 晚上
+num(人数): 1,2,3，more
+flavor: acid(酸) sweet(甜) hot(辣) salty(咸) all(随便)
+```
 ### 查询条件
 ```
 {
@@ -94,3 +101,4 @@ db.getCollection('Foods').find({
 2、后台驱动前台。前端可选标签从后台获得，这样以后新增标签就不用改前端。
 
 3、推荐算法，这个不知道能做成什么效果
+4、现在推荐算法跟两个东西耦合，一个是人数，一个是推荐种类

@@ -30,7 +30,6 @@ function findSuggest(condition,callback) {
     //只有通过强制类型转换？
     condition.prototype = Condition.prototype;
     var Filter = {
-        "tags.season":condition.season,
         "tags.taste":condition.tasteFilter(),
         "tags.people":condition.peopleFilter(),
         "tags.sex":condition.sexFilter(),
@@ -38,13 +37,13 @@ function findSuggest(condition,callback) {
         "HealthCondition":condition.healthConditionFilter()
     };
     var result = [];
-    MongoClient.FoodsColl.find(Filter).toArray(function (err,docs) {
+    MongoClient.FoodsColl.find(Filter).limit(condition.wantSuggestNum).toArray(function (err,docs) {
         if(err){
             console.log("推荐美食出错");
             throw err;
         }
         else {
-            console.log("查找条件 : "+JSON.stringify(condition)+"  找到结果数量: "+docs.length);
+            console.log(" 按照查找条件 : "+JSON.stringify(condition)+"  找到结果数量: "+docs.length);
             for(var i=0;i<docs.length;i++){
                 result[i] = new SuggestFood(docs[i]);
             }
@@ -66,7 +65,7 @@ function suggestByWeather(condition,callback) {
         "HealthCondition":condition.healthConditionFilter()
     };
     var result = [];
-    MongoClient.db.find(Filter).toArray(function (err,docs) {
+    MongoClient.FoodsColl.find(Filter).toArray(function (err,docs) {
         if(err){
             console.log("推荐美食出错");
             throw err;
@@ -80,31 +79,27 @@ function suggestByWeather(condition,callback) {
     })
 }
 
-//请客函数
-function suggestTreat(callback) {
-    //只有通过强制类型转换？
-    condition.prototype = Condition;
-    var Filter = {
-        "tags.season":condition.season,
-        "tags.taste":condition.tasteFilter(),
-        "tags.people":condition.peopleFilter(),
-        "tags.sex":condition.sexFilter(),
-        "tags.time":condition.timeFilter(),
-        "HealthCondition":condition.healthConditionFilter()
-    };
+//请客函数 目前采用随机的方法
+function suggestTreat(condition,callback) {
     var result = [];
-    MongoClient.db.find(Filter).toArray(function (err,docs) {
-        if(err){
-            console.log("推荐美食出错");
-            throw err;
-        }
-        else {
-            for(var i=0;i<docs.length;i++){
-                result[i] = new SuggestFood(docs[i]);
+    var DBCursor = MongoClient.FoodsColl.find();
+    DBCursor.count(function (err,foodNum) {
+        console.log("当前数据库食物总量 :"+foodNum);
+        var ran = Random(0,foodNum-1);
+        DBCursor.limit(1).skip(ran);
+        DBCursor.toArray(function (err,docs) {
+            if(err){
+                console.log("推荐美食出错");
+                throw err;
             }
-        }
-        return result;
-    })
+            else {
+                for(var i=0;i<docs.length;i++){
+                    result[i] = new SuggestFood(docs[i]);
+                }
+            }
+            callback(result);
+        })
+    });
 }
 
 var MongoHelper = {
@@ -115,6 +110,11 @@ var MongoHelper = {
     suggestTreat:suggestTreat,
 };
 
+function Random(Min,Max) {
+    var Range = Max - Min;
+    var Rand = Math.random();
+    return(Min + Math.round(Rand * Range));
+}
 //将Mongo的client暴露出去
 // module.exports = MongoClient;
 module.exports = MongoHelper;

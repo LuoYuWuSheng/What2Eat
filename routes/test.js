@@ -7,8 +7,8 @@ var router = express.Router();
 var SuggestFood = require('../model/SuggestFood');
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
-    console.log(JSON.stringify(req.body));
+router.use('/', function(req, res, next) {
+    console.log("/test 路径下的请求"+JSON.stringify(req.body));
     var food = new SuggestFood();
     food.name = "食物名称";
     var result = [food];
