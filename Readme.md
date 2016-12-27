@@ -1,3 +1,5 @@
+# Weex项目后台
+> 今天吃点啥~ 根据用户的喜好，天气等条件推送美食。
 
 ## 登陆接口
 
@@ -54,7 +56,7 @@ db.getCollection('Foods').find({
     "tags.time":{$in:["n"]}
     })
 ```
-### 前段传入条件
+### 前端传入条件
 ```
 health: great(精神好) cute(萌萌哒) recover(小病初愈) meat(想吃肉) pox(长痘) hungry(饿好几天了)
 time : morning 早上、midday 中午、pm 、下午茶、evening 晚上
