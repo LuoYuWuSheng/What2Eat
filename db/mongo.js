@@ -47,8 +47,18 @@ function findSuggest(condition,callback) {
             for(var i=0;i<docs.length;i++){
                 result[i] = new SuggestFood(docs[i]);
             }
+            //数目不够想要的建议数量就随机生成
+            //todo if else 不同情况要分别callback
+            if(result.length < condition.wantSuggestNum){
+                var moreNum = condition.wantSuggestNum - result.length;
+                RandomFood(moreNum,function (RanResult) {
+                    result = result.concat(RanResult);
+                    callback(result);
+                });
+            }else {
+                callback(result);
+            }
         }
-        callback(result);
     })
 }
 
@@ -74,19 +84,27 @@ function suggestByWeather(condition,callback) {
             for(var i=0;i<docs.length;i++){
                 result[i] = new SuggestFood(docs[i]);
             }
+            if(result.length < condition.wantSuggestNum){
+                var moreNum = condition.wantSuggestNum - result.length;
+                RandomFood(moreNum,function (RanResult) {
+                    result = result.concat(RanResult);
+                    callback(result);
+                });
+            }else {
+                callback(result);
+            }
         }
-        callback(result);
     })
 }
 
-//请客函数 目前采用随机的方法
-function suggestTreat(condition,callback) {
+//随机函数，1参数是随机的数量，callback是回调
+function RandomFood(RanNum,callback) {
     var result = [];
     var DBCursor = MongoClient.FoodsColl.find();
     DBCursor.count(function (err,foodNum) {
         console.log("当前数据库食物总量 :"+foodNum);
-        var ran = Random(0,foodNum-1);
-        DBCursor.limit(1).skip(ran);
+        var ran = Random(0,foodNum-RanNum);
+        DBCursor.limit(RanNum).skip(ran);
         DBCursor.toArray(function (err,docs) {
             if(err){
                 console.log("推荐美食出错");
@@ -102,12 +120,28 @@ function suggestTreat(condition,callback) {
     });
 }
 
+
+//请客函数 目前采用随机的方法
+function suggestTreat(condition,callback) {
+    RandomFood(1,callback);
+}
+
+// 用户登录
+function login(user,callback) {
+    MongoClient.usersColl.find({name:user.username,passwd:user.password}).toArray(function (err, docs) {
+        if(docs.length != 0) callback(true);
+        else  callback(false);
+    });
+
+}
+
 var MongoHelper = {
     MongoClient:MongoClient,
     //如果后面加了括号就是调用的意思
     findSuggest:findSuggest,
     suggestByWeather:suggestByWeather,
     suggestTreat:suggestTreat,
+    login:login,
 };
 
 function Random(Min,Max) {
