@@ -10,9 +10,8 @@ var trival = require('./travel');
 route.use('/',function (req, res, next) {
     //todo 好坑，传了个undefined，http竟然报莫名的错误
     if(req.body.url !== undefined && req.body.url !== '')trival.nextUrl = req.body.url;
-    var oneFood = new SuggestFood();
-    trival.travel(function () {
-        res.render('trival',{food:oneFood})
+    trival.travel(function (oneFood) {
+        res.render('travel',{food:oneFood})
     });
 });
 

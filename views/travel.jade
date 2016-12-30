@@ -11,12 +11,14 @@ block content
         tr
             td 名字
             td 描述
+            td 人数
+            td 味道
             td 图片1
             td 图片2
-            td 好处
         tr
             td #{food.name}
             td #{food.describe}
-            td <img src="/images/db/#{food.image[0]}" />
-            td <img src="/images/db/#{food.image[1]}" />
-            td #{food.benefit}
+            td #{food.tags.people}
+            td #{food.tags.taste}
+            td <img src="#{food.images[0]}" />
+            td <img src="#{food.images[1]}" />

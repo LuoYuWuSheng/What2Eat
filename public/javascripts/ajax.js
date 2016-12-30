@@ -6,9 +6,9 @@
 $.ajax({
     type:"post",
     dataType:"html",
-    url:'/test',
+    url:'/users/signup',
     contentType: "application/json; charset=utf-8",
-    data:JSON.stringify({condition:{name:'hahah',people:3}}),
+    data:JSON.stringify({condition:{username:'lx',password:"lx"}}),
     success:function (data) {
         if(data!=""){
             console.log("有数据返回");

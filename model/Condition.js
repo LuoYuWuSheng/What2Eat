@@ -75,8 +75,10 @@ Condition.prototype = {
                 return 1;
             case 2:
                 return 2;
+            case 3:
+                return 3;
             default:
-                return {$gt: 2};
+                return {$gt:3};
         }
     },
     sexFilter: function () {

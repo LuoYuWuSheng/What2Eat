@@ -44,7 +44,7 @@ router.use('/suggest', function (req, res) {
 });
 
 //随机推荐
-router.get('/weather', function (req, res) {
+router.use('/weather', function (req, res) {
     var test = req.body.condition == undefined;
 
     //todo 这里需要根据天气来搜索，目前还没有实现
@@ -71,7 +71,7 @@ router.get('/weather', function (req, res) {
 });
 
 //请客的url，随机一个，从多人当中
-router.get('/treat', function (req, res) {
+router.use('/treat', function (req, res) {
     var test = req.body.condition == undefined;
     var condition = new Condition();
     condition.people = 3;

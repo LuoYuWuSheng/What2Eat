@@ -63,7 +63,7 @@ db.getCollection('Foods').find({
 ### 前端传入条件
 ```
 health: great(精神好) cute(萌萌哒) recover(小病初愈) meat(想吃肉) pox(长痘) hungry(饿好几天了)
-time : morning 早上、midday 中午、pm 、下午茶、evening 晚上
+time : morning 早上、midday 中午、pm 、下午茶、evening 晚上 night 夜宵
 num(人数): 1,2,3，more
 flavor: acid(酸) sweet(甜) hot(辣) salty(咸) all(随便)
 ```
@@ -76,7 +76,7 @@ flavor: acid(酸) sweet(甜) hot(辣) salty(咸) all(随便)
     people : -2寝室、 -1 情侣 、0 家庭、1 单人、2两人、3、多人，
     sex : "男"，
     taste : ["咸"],酸甜辣咸鲜
-    time: "n" m 早上、n 中午、a 、下午茶、e 晚上
+    time: "n" m 早上、n 中午、a 、下午茶、e 晚上 y 夜宵
 }
 ```
 

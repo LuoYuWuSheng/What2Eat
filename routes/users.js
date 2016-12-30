@@ -14,7 +14,10 @@ router.use('/login', function (req, res) {
 });
 
 router.use('/signup', function (req, res) {
-    // todo 注册 MongoHelper.signup();
+    var user = req.body.condition;
+    MongoHelper.signup(user,function (result) {
+        return res.json(result);
+    })
 });
 
 module.exports = router;

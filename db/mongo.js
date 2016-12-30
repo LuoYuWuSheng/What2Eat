@@ -32,7 +32,7 @@ function findSuggest(condition,callback) {
     var Filter = {
         "tags.taste":condition.tasteFilter(),
         "tags.people":condition.peopleFilter(),
-        "tags.sex":condition.sexFilter(),
+        // "tags.sex":condition.sexFilter(),
         "tags.time":condition.timeFilter(),
         "HealthCondition":condition.healthConditionFilter()
     };
@@ -134,6 +134,18 @@ function login(user,callback) {
     });
 
 }
+//用户注册
+function signup(user,callback) {
+    MongoClient.usersColl.find({name:user.username}).toArray(
+        function (err, docs) {
+            if(docs.length != 0)callback({success:false});
+            else {
+                MongoClient.usersColl.insertOne({name:user.username,passwd:user.password});
+                callback({success:true});
+            }
+        }
+    );
+}
 
 var MongoHelper = {
     MongoClient:MongoClient,
@@ -142,6 +154,7 @@ var MongoHelper = {
     suggestByWeather:suggestByWeather,
     suggestTreat:suggestTreat,
     login:login,
+    signup:signup,
 };
 
 function Random(Min,Max) {
