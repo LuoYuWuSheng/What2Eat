@@ -4,7 +4,7 @@
  */
 function SuggestFood(doc) {
     if(doc!=null){
-        this.id = doc.id;
+        this.id = doc._id;
         this.name = doc.name;
         this.image = doc.image;
         this.describe = doc.describe;

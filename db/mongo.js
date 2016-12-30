@@ -8,6 +8,7 @@ var Condition = require('../model/Condition');
 var SuggestFood = require('../model/SuggestFood');
 var dbUrl = 'mongodb://localhost:27017/what2eat';
 var MongoClient = mongdb.MongoClient;
+var ObjectID = require('mongodb').ObjectID;
 
 //链接数据库并存储db对象
 MongoClient.connect(dbUrl,function (err,db) {
@@ -50,8 +51,15 @@ function findSuggest(condition,callback) {
             //数目不够想要的建议数量就随机生成
             //todo if else 不同情况要分别callback
             if(result.length < condition.wantSuggestNum){
+                //去重的过滤器
+                var distincFilter = {
+                    _id:{$nin:[]}
+                };
+                for(var i=0;i<result.length;i++){
+                    distincFilter._id.$nin[i] = result[i].id;
+                }
                 var moreNum = condition.wantSuggestNum - result.length;
-                RandomFood(moreNum,function (RanResult) {
+                RandomFood(moreNum,distincFilter,function (RanResult) {
                     result = result.concat(RanResult);
                     callback(result);
                 });
@@ -70,7 +78,7 @@ function suggestByWeather(condition,callback) {
         "tags.season":condition.season,
         "tags.taste":condition.tasteFilter(),
         "tags.people":condition.peopleFilter(),
-        "tags.sex":condition.sexFilter(),
+        // "tags.sex":condition.sexFilter(),
         "tags.time":condition.timeFilter(),
         "HealthCondition":condition.healthConditionFilter()
     };
@@ -85,8 +93,15 @@ function suggestByWeather(condition,callback) {
                 result[i] = new SuggestFood(docs[i]);
             }
             if(result.length < condition.wantSuggestNum){
+                //去重的过滤器
+                var distincFilter = {
+                    _id:{$nin:[]}
+                };
+                for(var i=0;i<result.length;i++){
+                    distincFilter._id.$nin[i] = result[i].id;
+                }
                 var moreNum = condition.wantSuggestNum - result.length;
-                RandomFood(moreNum,function (RanResult) {
+                RandomFood(moreNum,distincFilter,function (RanResult) {
                     result = result.concat(RanResult);
                     callback(result);
                 });
@@ -97,10 +112,10 @@ function suggestByWeather(condition,callback) {
     })
 }
 
-//随机函数，1参数是随机的数量，callback是回调
-function RandomFood(RanNum,callback) {
+//随机函数，1参数是随机的数量， Filter 代表随机是时的过滤器 callback是回调
+function RandomFood(RanNum,Filter,callback) {
     var result = [];
-    var DBCursor = MongoClient.FoodsColl.find();
+    var DBCursor = MongoClient.FoodsColl.find(Filter);
     DBCursor.count(function (err,foodNum) {
         console.log("当前数据库食物总量 :"+foodNum);
         var ran = Random(0,foodNum-RanNum);
@@ -123,7 +138,7 @@ function RandomFood(RanNum,callback) {
 
 //请客函数 目前采用随机的方法
 function suggestTreat(condition,callback) {
-    RandomFood(1,callback);
+    RandomFood(1,{},callback);
 }
 
 // 用户登录
