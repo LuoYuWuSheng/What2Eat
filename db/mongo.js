@@ -169,6 +169,36 @@ function editUserInfo(user,callback) {
     });
 }
 
+//上传美食，目前这个接口只有爬虫在使用
+function uploadFood(reqParam) {
+    //todo 完成格式化数据
+    var dbFood = {
+        name : reqParam.name,
+        "image" : [reqParam.imageURL],
+        "tags" : {
+            "season" : reqParam.season,
+            "people" : reqParam.people,
+            "sex" : 0,
+            "taste" : reqParam.taste,
+            "time" : reqParam.time
+        },
+        "describe" : reqParam.describe,
+        "benefit" : "",
+        "HealthCondition" : reqParam.healthCondition,
+        "cookMethod" : {
+            "exist" : false,
+            "material" : [],
+            "stepImage" : [
+                "#"
+            ]
+        }
+
+    };
+    MongoClient.FoodsColl.updateOne({name:dbFood.name},dbFood,{upsert:true},function (err, result) {
+        if(err)console.log("插入数据库出错");
+    });
+}
+
 var MongoHelper = {
     MongoClient:MongoClient,
     //如果后面加了括号就是调用的意思
@@ -179,6 +209,7 @@ var MongoHelper = {
     signup:signup,
     getUserInfo:getUserInfo,
     editUserInfo:editUserInfo,
+    uploadFood:uploadFood,
 };
 
 function Random(Min,Max) {

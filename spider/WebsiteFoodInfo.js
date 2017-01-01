@@ -12,7 +12,6 @@ class foodInfo{
         this.tags.sex = 0;
         this.tags.people = 1;
         this.originalURL = "";
-        this.msjURL = "";
         this.tags.time = [];
         this.tags.taste = [];
 

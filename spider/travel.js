@@ -11,14 +11,8 @@ var Entities = require('html-entities').XmlEntities;
 var entities = new Entities();
 var spiderRequest = require('request');
 var WebsiteFoodInfo = require('./WebsiteFoodInfo');
-
-var requestHeader = {
-    hostname:'www.meishij.net',
-    path :'/zuofa/yingtaorou_7.html',
-    headers :{
-        'User-Agent':'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
-    }
-};
+var fs = require('fs');
+var spiderUrls = require('./spiderUrls');
 
 var reqFoodHeader = {
     url:'http://www.meishij.net/zuofa/laziji_61.html',
@@ -70,7 +64,6 @@ var travel = {
                 callback(result);
             });
         });
-        //todo 这里估计会有问题，无论什么情况都会返回空的food
     },
 };
 
@@ -81,8 +74,6 @@ function resolveHtml(html,callback) {
     var taste;
     var people;
     var describe;
-    var originalURL;
-    var msjURL = requestHeader.url;
 
     var $ = cheerio.load(html);
     var divMain = $('div.main_w').children('div.main');
@@ -112,8 +103,13 @@ function resolveHtml(html,callback) {
     result.tags.taste = taste;
     result.tags.people = people;
     result.images = imgArray;
-
-    callback(result);
+    result.originalURL = reqFoodHeader.url;
+    //这样很危险啊，如果快了就拿不到下一个url 只好将callback 放到里面了
+    spiderUrls.nextUrl('morning',function (url) {
+        reqFoodHeader.url = url;
+        callback(result);
+    });
 }
+
 
 module.exports = travel;

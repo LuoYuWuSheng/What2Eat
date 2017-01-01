@@ -7,18 +7,100 @@ block content
         p 爬取的url
         input(type='text',name='url')
         button 提交
+    a(href='#{food.originalURL}',target='view_window') 原网页地址
+    br
     table(class="table")
         tr
             td 名字
             td 描述
             td 人数
             td 味道
-            td 图片1
-            td 图片2
+            td 适合身体状况
+            td 适合的季节
+            td 适合食用时间
+            td 图片
+            td 图片链接
         tr
             td #{food.name}
             td #{food.describe}
             td #{food.tags.people}
             td #{food.tags.taste}
+            td
+            td
+            td
             td <img src="#{food.images[0]}" />
-            td <img src="#{food.images[1]}" />
+            td
+        tr
+            form(action='/travel/upload',method='post')
+                td
+                    input(type='text',name='name',value='#{food.name}')
+                td
+                    input(type='text',name='describe',value='#{food.describe}')
+                td
+                    input(type='text',name='people',value='')
+                td
+                    input(type='checkbox',name='taste' value="酸")
+                    label 酸
+                    br
+                    input(type='checkbox',name='taste' value="甜")
+                    label 甜
+                    br
+                    input(type='checkbox',name='taste' value="辣")
+                    label 辣
+                    br
+                    input(type='checkbox',name='taste' value="咸")
+                    label 咸
+                    br
+                    input(type='checkbox',name='taste' value="鲜")
+                    label 鲜
+                td
+                    input(type='checkbox',name='healthCondition' value="精神好")
+                    label 精神好
+                    br
+                    input(type='checkbox',name='healthCondition' value="萌萌哒")
+                    label 萌萌哒
+                    br
+                    input(type='checkbox',name='healthCondition' value="小病初愈")
+                    label 小病初愈
+                    br
+                    input(type='checkbox',name='healthCondition' value="想吃肉")
+                    lable 想吃肉
+                    br
+                    input(type='checkbox',name='healthCondition' value="长痘")
+                    label 长痘
+                    br
+                    input(type='checkbox',name='healthCondition' value="饿好几天了")
+                    label 饿好几天了
+                td
+                    input(type='checkbox',name='season' value="春")
+                    lable 春
+                    br
+                    input(type='checkbox',name='season' value="夏")
+                    label 夏
+                    br
+                    input(type='checkbox',name='season' value="秋")
+                    label 秋
+                    br
+                    input(type='checkbox',name='season' value="冬")
+                    label 冬
+                td
+                    input(type='checkbox',name='time' value="m")
+                    lable 早晨
+                    br
+                    input(type='checkbox',name='time' value="n")
+                    label 中午
+                    br
+                    input(type='checkbox',name='time' value="a")
+                    lable 下午茶
+                    br
+                    input(type='checkbox',name='time' value="e")
+                    lable 晚上
+                    br
+                    input(type='checkbox',name='time' value="y")
+                    lable 夜宵
+
+                td <img src="#{food.images[0]}" />
+                td
+                    input(type='text',name='imageURL' value='#{food.images[0]}')
+                button 上传到数据库
+            button(onclick="location.href='next'") 跳过
