@@ -11,7 +11,7 @@ $.ajax({
     data:JSON.stringify({user:{username:'lx',password:"lx"}}),
     success:function (data) {
         if(data!=""){
-            console.log("有数据返回");
+            console.log("返回数据 "+JSON.stringify(data));
         }
     }
 });

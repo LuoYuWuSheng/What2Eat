@@ -69,7 +69,8 @@ function suggestByWeather(condition,callback) {
     condition.prototype = Condition;
     var Filter = condition.getWeatherFilter();
     var result = [];
-    MongoClient.FoodsColl.find(Filter).toArray(function (err,docs) {
+    // RandomFood(condition.wantSuggestNum,Filter,);
+    MongoClient.FoodsColl.find(Filter).limit(condition.wantSuggestNum).toArray(function (err,docs) {
         if(err){
             console.log("推荐美食出错");
             throw err;
@@ -160,7 +161,7 @@ function getUserInfo(user,callback) {
 function editUserInfo(user,callback) {
     user.prototype = User;
     MongoClient.usersColl.findOneAndUpdate({name:user.username},user.upPersonalInfo(),function (err, result) {
-        if(result!==null)callback({editResult:"success"});
+        if(result.value !==null)callback({editResult:"success"});
         else callback({editResult:"failure"})
     });
 }

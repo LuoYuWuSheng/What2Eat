@@ -7,22 +7,18 @@ function User(doc) {
         this.id = doc._id;
         this.username = doc.name;
         this.password = doc.passwd;
-        this.personalInfo = {};
-        if(doc.personalInfo != undefined){
-            this.personalInfo.star = doc.personalInfo.star;
-            this.personalInfo.age = doc.personalInfo.age;
-            this.personalInfo.favor = doc.personalInfo.favor;
-            this.personalInfo.career = doc.personalInfo.career;
-        }
+        //如果是undefined的话，代表用户还没有编辑过信息。
+        this.personalInfo = doc.personalInfo;
     }else {
         this.id = "";
         this.username = "不存在此用户";
         this.password = "";
-        this.personalInfo = {};
-        this.personalInfo.star = "";
-        this.personalInfo.age = "";
-        this.personalInfo.favor = "";
-        this.personalInfo.career = "";
+        this.personalInfo = {
+            star : "",
+            age : "",
+            favor : "",
+            career : ""
+        };
     }
 }
 
@@ -31,6 +27,10 @@ User.prototype = {
         var upDoc = { $set:{}};
         upDoc.$set.personalInfo = this.personalInfo;
         return upDoc;
+    },
+    //前端传过来的做一个映射 目前没有写
+    setPersonalInfo(param){
+
     }
 };
 

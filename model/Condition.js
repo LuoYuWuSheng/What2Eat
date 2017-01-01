@@ -103,21 +103,19 @@ Condition.prototype = {
         return {$in: [this.time]};
     },
     getSuggestFilter:function () {
-        return {
-            "tags.taste": this.tasteFilter(),
+        var Filter = {
             "tags.people": this.peopleFilter(),
             "tags.time": this.timeFilter(),
             "HealthCondition": this.healthConditionFilter()
         };
-    },
+        if(this.taste != "随便") Filter["tags.taste"] =this.tasteFilter();
+        return Filter
+    }
+    ,
     getWeatherFilter : function () {
         //按天气推荐，目前只有季节的条件
         return {
             "tags.season":this.season,
-            // "tags.taste":this.tasteFilter(),
-            // "tags.people":this.peopleFilter(),
-            // "tags.time":this.timeFilter(),
-            // "HealthCondition":this.healthConditionFilter()
         }
     },
     getTreatFilter:function () {
