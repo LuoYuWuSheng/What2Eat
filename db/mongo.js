@@ -31,36 +31,29 @@ function findSuggest(condition,callback) {
     condition.prototype = Condition.prototype;
     var Filter = condition.getSuggestFilter();
     var result = [];
-    MongoClient.FoodsColl.find(Filter).limit(condition.wantSuggestNum).toArray(function (err,docs) {
-        if(err){
-            console.log("推荐美食出错");
-            throw err;
-        }
-        else {
-            console.log(" 按照查找条件 : "+JSON.stringify(condition)+"  找到结果数量: "+docs.length);
-            for(var i=0;i<docs.length;i++){
-                result[i] = new SuggestFood(docs[i]);
+    RandomFood(condition.wantSuggestNum,Filter,function (tagsResult) {
+        console.log(" 按照查找条件 : "+JSON.stringify(condition)+"  找到结果数量: "+tagsResult.length);
+        result = tagsResult;
+        //数目不够想要的建议数量就随机生成
+        //todo if else 不同情况要分别callback
+        if(result.length < condition.wantSuggestNum){
+            //去重的过滤器
+            var distincFilter = {
+                _id:{$nin:[]}
+            };
+            for(var i=0;i<result.length;i++){
+                distincFilter._id.$nin[i] = result[i].id;
             }
-            //数目不够想要的建议数量就随机生成
-            //todo if else 不同情况要分别callback
-            if(result.length < condition.wantSuggestNum){
-                //去重的过滤器
-                var distincFilter = {
-                    _id:{$nin:[]}
-                };
-                for(var i=0;i<result.length;i++){
-                    distincFilter._id.$nin[i] = result[i].id;
-                }
-                var moreNum = condition.wantSuggestNum - result.length;
-                RandomFood(moreNum,distincFilter,function (RanResult) {
-                    result = result.concat(RanResult);
-                    callback(result);
-                });
-            }else {
+            var moreNum = condition.wantSuggestNum - result.length;
+            RandomFood(moreNum,distincFilter,function (RanResult) {
+                result = result.concat(RanResult);
                 callback(result);
-            }
+            });
+        }else {
+            callback(result);
         }
-    })
+    });
+    // MongoClient.FoodsColl.find(Filter).limit(condition.wantSuggestNum).toArray()
 }
 
 //通过天气进行推荐
@@ -69,34 +62,27 @@ function suggestByWeather(condition,callback) {
     condition.prototype = Condition;
     var Filter = condition.getWeatherFilter();
     var result = [];
-    // RandomFood(condition.wantSuggestNum,Filter,);
-    MongoClient.FoodsColl.find(Filter).limit(condition.wantSuggestNum).toArray(function (err,docs) {
-        if(err){
-            console.log("推荐美食出错");
-            throw err;
-        }
-        else {
-            for(var i=0;i<docs.length;i++){
-                result[i] = new SuggestFood(docs[i]);
+    RandomFood(condition.wantSuggestNum,Filter,function (tagsResult) {
+        result = tagsResult;
+        //数量不足，就随机
+        if(result.length < condition.wantSuggestNum){
+            //去重的过滤器
+            var distincFilter = {
+                _id:{$nin:[]}
+            };
+            for(var i=0;i<result.length;i++){
+                distincFilter._id.$nin[i] = result[i].id;
             }
-            if(result.length < condition.wantSuggestNum){
-                //去重的过滤器
-                var distincFilter = {
-                    _id:{$nin:[]}
-                };
-                for(var i=0;i<result.length;i++){
-                    distincFilter._id.$nin[i] = result[i].id;
-                }
-                var moreNum = condition.wantSuggestNum - result.length;
-                RandomFood(moreNum,distincFilter,function (RanResult) {
-                    result = result.concat(RanResult);
-                    callback(result);
-                });
-            }else {
+            var moreNum = condition.wantSuggestNum - result.length;
+            RandomFood(moreNum,distincFilter,function (RanResult) {
+                result = result.concat(RanResult);
                 callback(result);
-            }
+            });
+        }else {
+            callback(result);
         }
-    })
+    });
+    // MongoClient.FoodsColl.find(Filter).limit(condition.wantSuggestNum).toArray()
 }
 
 //请客函数 目前采用随机的方法
@@ -111,20 +97,37 @@ function RandomFood(RanNum,Filter,callback) {
     var DBCursor = MongoClient.FoodsColl.find(Filter);
     DBCursor.count(function (err,foodNum) {
         console.log("当前数据库食物总量 :"+foodNum);
-        var ran = Random(0,foodNum-RanNum);
-        DBCursor.limit(RanNum).skip(ran);
-        DBCursor.toArray(function (err,docs) {
-            if(err){
-                console.log("推荐美食出错");
-                throw err;
-            }
-            else {
-                for(var i=0;i<docs.length;i++){
-                    result[i] = new SuggestFood(docs[i]);
+        if(foodNum > RanNum){
+            var ran = Random(0,foodNum-RanNum);
+            DBCursor.limit(RanNum).skip(ran);
+            DBCursor.toArray(function (err,docs) {
+                if(err){
+                    console.log("推荐美食出错");
+                    throw err;
                 }
-            }
-            callback(result);
-        })
+                else {
+                    for(var i=0;i<docs.length;i++){
+                        result[i] = new SuggestFood(docs[i]);
+                    }
+                }
+                callback(result);
+            })
+        }else {
+            //满足Filter的食物数量不足，取出所有满足Filter的
+            DBCursor.limit(RanNum);
+            DBCursor.toArray(function (err,docs) {
+                if(err){
+                    console.log("推荐美食出错");
+                    throw err;
+                }
+                else {
+                    for(var i=0;i<docs.length;i++){
+                        result[i] = new SuggestFood(docs[i]);
+                    }
+                }
+                callback(result);
+            })
+        }
     });
 }
 

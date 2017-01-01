@@ -34,7 +34,7 @@ router.use('/getInfo',function (req, res) {
 router.use('/editInfo',function (req, res) {
     var user = new User();
     user.username = req.body.user.username;
-    user.personalInfo = req.body.user.personalInfo;
+    user.setPersonalInfo(req.body.user.personalInfo);
     MongoHelper.editUserInfo(user,function (result) {
         res.json(result);
     })

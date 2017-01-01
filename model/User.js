@@ -28,9 +28,23 @@ User.prototype = {
         upDoc.$set.personalInfo = this.personalInfo;
         return upDoc;
     },
-    //前端传过来的做一个映射 目前没有写
-    setPersonalInfo(param){
-
+    setPersonalInfo(perInfoParam){
+        switch (perInfoParam.favor){
+            case 0:this.personalInfo.favor = "无辣不欢";break;
+            case 1:this.personalInfo.favor = "素食主义";break;
+            case 2:this.personalInfo.favor = "少糖少盐";break;
+            case 3:this.personalInfo.favor = "就爱甜食";break;
+            case 4:this.personalInfo.favor = "从不挑食";break;
+            default :this.personalInfo.favor = "从不挑食";break;
+        }
+        switch (perInfoParam.career){
+            case 5:this.personalInfo.career = "学生党";break;
+            case 6:this.personalInfo.career = "上班族";break;
+            case 7:this.personalInfo.career = "自由职业";break;
+            default:this.personalInfo.career = "学生党";break;
+        }
+        this.personalInfo.age = perInfoParam.age;
+        this.personalInfo.star = perInfoParam.star;
     }
 };
 
