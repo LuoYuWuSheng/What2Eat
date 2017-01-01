@@ -49,13 +49,7 @@ router.use('/weather', function (req, res) {
 
     //todo 这里需要根据天气来搜索，目前还没有实现
     var condition = new Condition();
-    condition.season = "冬";
     condition.weather = "sunny";
-    condition.people = 3;
-    condition.healthCondition = "精神好";
-    condition.sex = "男";
-    condition.taste = "辣";
-    condition.time = "n";
     condition.wantSuggestNum = 2;
     MongoHelper.suggestByWeather(condition,
         function (result) {

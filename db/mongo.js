@@ -8,7 +8,7 @@ var Condition = require('../model/Condition');
 var SuggestFood = require('../model/SuggestFood');
 var dbUrl = 'mongodb://localhost:27017/what2eat';
 var MongoClient = mongdb.MongoClient;
-var ObjectID = require('mongodb').ObjectID;
+var User = require('../model/User');
 
 //链接数据库并存储db对象
 MongoClient.connect(dbUrl,function (err,db) {
@@ -23,20 +23,13 @@ MongoClient.connect(dbUrl,function (err,db) {
     }
 });
 
-//todo js不会帮你校验传入的是否是Condition类？
-//不行啊，不是Condition类的用不了该类的方法啊
+
 //只暴露MongoClient应该调用不了方法，必须通过某种方法调用;
 function findSuggest(condition,callback) {
     if(condition == null) throw new Error("传入的查询条件为空");
     //只有通过强制类型转换？
     condition.prototype = Condition.prototype;
-    var Filter = {
-        "tags.taste":condition.tasteFilter(),
-        "tags.people":condition.peopleFilter(),
-        // "tags.sex":condition.sexFilter(),
-        "tags.time":condition.timeFilter(),
-        "HealthCondition":condition.healthConditionFilter()
-    };
+    var Filter = condition.getSuggestFilter();
     var result = [];
     MongoClient.FoodsColl.find(Filter).limit(condition.wantSuggestNum).toArray(function (err,docs) {
         if(err){
@@ -74,14 +67,7 @@ function findSuggest(condition,callback) {
 function suggestByWeather(condition,callback) {
     //只有通过强制类型转换？
     condition.prototype = Condition;
-    var Filter = {
-        "tags.season":condition.season,
-        "tags.taste":condition.tasteFilter(),
-        "tags.people":condition.peopleFilter(),
-        // "tags.sex":condition.sexFilter(),
-        "tags.time":condition.timeFilter(),
-        "HealthCondition":condition.healthConditionFilter()
-    };
+    var Filter = condition.getWeatherFilter();
     var result = [];
     MongoClient.FoodsColl.find(Filter).toArray(function (err,docs) {
         if(err){
@@ -112,7 +98,13 @@ function suggestByWeather(condition,callback) {
     })
 }
 
-//随机函数，1参数是随机的数量， Filter 代表随机是时的过滤器 callback是回调
+//请客函数 目前采用随机的方法
+function suggestTreat(condition,callback) {
+    var Filter = condition.getTreatFilter();
+    RandomFood(1,Filter,callback);
+}
+
+//随机函数，1参数是随机的数量， Filter 代表随机时的过滤器 callback是回调
 function RandomFood(RanNum,Filter,callback) {
     var result = [];
     var DBCursor = MongoClient.FoodsColl.find(Filter);
@@ -133,12 +125,6 @@ function RandomFood(RanNum,Filter,callback) {
             callback(result);
         })
     });
-}
-
-
-//请客函数 目前采用随机的方法
-function suggestTreat(condition,callback) {
-    RandomFood(1,{},callback);
 }
 
 // 用户登录
@@ -162,6 +148,23 @@ function signup(user,callback) {
     );
 }
 
+//获取用户个人信息
+function getUserInfo(user,callback) {
+    MongoClient.usersColl.findOne({name:user.username},function (err, result) {
+        var userInfo = new User();
+        if(result)userInfo = new User(result);
+        callback(userInfo);
+    });
+}
+//编辑用户信息
+function editUserInfo(user,callback) {
+    user.prototype = User;
+    MongoClient.usersColl.findOneAndUpdate({name:user.username},user.upPersonalInfo(),function (err, result) {
+        if(result!==null)callback({editResult:"success"});
+        else callback({editResult:"failure"})
+    });
+}
+
 var MongoHelper = {
     MongoClient:MongoClient,
     //如果后面加了括号就是调用的意思
@@ -170,6 +173,8 @@ var MongoHelper = {
     suggestTreat:suggestTreat,
     login:login,
     signup:signup,
+    getUserInfo:getUserInfo,
+    editUserInfo:editUserInfo,
 };
 
 function Random(Min,Max) {

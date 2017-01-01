@@ -6,7 +6,7 @@
 function Condition(reqParam) {
     if(reqParam != null){
         this.weather = "";
-        this.season = "";
+        this.sex = 0;
         switch (reqParam.health){
             case 'great':this.healthCondition = "精神好";break;
             case 'cute':this.healthCondition = "萌萌哒";break;
@@ -14,11 +14,10 @@ function Condition(reqParam) {
             case 'meat':this.healthCondition = "想吃肉";break;
             case 'pox':this.healthCondition = "长痘";break;
             case 'hungry':this.healthCondition = "饿了好几天";break;
-            default :this.healthCondition = "我不关心";
+            default :this.healthCondition = "精神好";
         }
         //默认人数是1
         this.people = parseInt(reqParam.num);
-        this.sex = 0;
         switch (reqParam.flavor){
             case 'acid':this.taste = "酸";break;
             case 'sweet':this.taste = "甜";break;
@@ -31,10 +30,11 @@ function Condition(reqParam) {
             case 'midday':this.time = "n";break;
             case 'pm':this.time = "a";break;
             case 'evening':this.time = "e";break;
-            case 'night':this.time = "e";break;
+            case 'night':this.time = "y";break;
             default :this.time = "随便";
         }
-    }else {
+    }
+    else {
         this.weather = "";
         this.season = "";
         this.healthCondition = "";
@@ -46,6 +46,21 @@ function Condition(reqParam) {
     }
     //默认是拿到全部数据
     this.wantSuggestNum = 0;
+    //季节通过计算时间获得
+    switch (new Date().getMonth()+1){
+        case 3:
+        case 4:
+        case 5:this.season = "春";break;
+        case 6:
+        case 7:
+        case 8:this.season = "夏";break;
+        case 9:
+        case 10:
+        case 11:this.season = "秋";break;
+        case 12:
+        case 1:
+        case 2:this.season = "冬";break;
+    }
 }
 
 Condition.prototype = {
@@ -81,17 +96,33 @@ Condition.prototype = {
                 return {$gt:3};
         }
     },
-    sexFilter: function () {
-        if (this.sex == "男")
-            return {$lt: 1};
-        else return {$gt: -1};
-    },
     tasteFilter: function () {
         return {$in: [this.taste]};
     },
     timeFilter: function () {
         return {$in: [this.time]};
     },
+    getSuggestFilter:function () {
+        return {
+            "tags.taste": this.tasteFilter(),
+            "tags.people": this.peopleFilter(),
+            "tags.time": this.timeFilter(),
+            "HealthCondition": this.healthConditionFilter()
+        };
+    },
+    getWeatherFilter : function () {
+        //按天气推荐，目前只有季节的条件
+        return {
+            "tags.season":this.season,
+            // "tags.taste":this.tasteFilter(),
+            // "tags.people":this.peopleFilter(),
+            // "tags.time":this.timeFilter(),
+            // "HealthCondition":this.healthConditionFilter()
+        }
+    },
+    getTreatFilter:function () {
+        return {};
+    }
 };
 
 module.exports = Condition;

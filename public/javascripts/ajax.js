@@ -8,7 +8,7 @@ $.ajax({
     dataType:"html",
     url:'/users/signup',
     contentType: "application/json; charset=utf-8",
-    data:JSON.stringify({condition:{username:'lx',password:"lx"}}),
+    data:JSON.stringify({user:{username:'lx',password:"lx"}}),
     success:function (data) {
         if(data!=""){
             console.log("有数据返回");
