@@ -7,13 +7,17 @@ block content
         p 爬取的url
         input(type='text',name='url')
         button 提交
+    br
     a(href='#{food.originalURL}',target='view_window') 原网页地址
+    br
     br
     table(class="table")
         tr
             td 名字
             td 描述
+            td 好处
             td 人数
+            td 分类
             td 味道
             td 适合身体状况
             td 适合的季节
@@ -23,7 +27,9 @@ block content
         tr
             td #{food.name}
             td #{food.describe}
+            td
             td #{food.tags.people}
+            td
             td #{food.tags.taste}
             td
             td
@@ -31,13 +37,37 @@ block content
             td <img src="#{food.images[0]}" />
             td
         tr
-            form(action='/travel/upload',method='post')
+            form(action='/travel/upload?time=#{time}',method='post')
                 td
-                    input(type='text',name='name',value='#{food.name}')
+                    textarea(type='text',rows='4',cols='15',name='name') #{food.name}
                 td
-                    input(type='text',name='describe',value='#{food.describe}')
+                    textarea(type='text',rows='4',cols='40',name='describe') #{food.describe}
                 td
-                    input(type='text',name='people',value='')
+                    textarea(type='text',rows='4',cols='40',name='benefit')
+                td
+                    input(type='radio',name='people' value="1")
+                    lable 一人
+                    br
+                    input(type='radio',name='people' value="2")
+                    label 两人
+                    br
+                    input(type='radio',name='people' value="3")
+                    label 三人
+                    br
+                    input(type='radio',name='people' value="4")
+                    label 多人
+                td
+                    input(type='radio',name='classify' value="cute")
+                    lable 小清新
+                    br
+                    input(type='radio',name='classify' value="hungry")
+                    label 吃不饱
+                    br
+                    input(type='radio',name='classify' value="high")
+                    label 高逼格
+                    br
+                    input(type='radio',name='classify' value="party")
+                    label 聚会餐
                 td
                     input(type='checkbox',name='taste' value="酸")
                     label 酸
@@ -72,16 +102,16 @@ block content
                     input(type='checkbox',name='healthCondition' value="饿好几天了")
                     label 饿好几天了
                 td
-                    input(type='checkbox',name='season' value="春")
+                    input(type='radio',name='season' value="春")
                     lable 春
                     br
-                    input(type='checkbox',name='season' value="夏")
+                    input(type='radio',name='season' value="夏")
                     label 夏
                     br
-                    input(type='checkbox',name='season' value="秋")
+                    input(type='radio',name='season' value="秋")
                     label 秋
                     br
-                    input(type='checkbox',name='season' value="冬")
+                    input(type='radio',name='season' value="冬")
                     label 冬
                 td
                     input(type='checkbox',name='time' value="m")
@@ -101,6 +131,10 @@ block content
 
                 td <img src="#{food.images[0]}" />
                 td
-                    input(type='text',name='imageURL' value='#{food.images[0]}')
-                button 上传到数据库
-            button(onclick="location.href='next'") 跳过
+                    textarea(rows='4',cols='25',name='imageURL') #{food.images[0]}
+                button 上传到数据库 &nbsp
+            button(onclick="location.href='next?time=morning'") 早餐 &nbsp
+            button(onclick="location.href='next?time=noon'") 午餐 &nbsp
+            button(onclick="location.href='next?time=evening'") 晚餐 &nbsp
+            button(onclick="location.href='next?time=afternoon'") 下午茶 &nbsp
+            button(onclick="location.href='next?time=night'") 夜宵 &nbsp

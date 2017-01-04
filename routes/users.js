@@ -39,5 +39,15 @@ router.use('/editInfo',function (req, res) {
         res.json(result);
     })
 });
+//点赞
+router.use('/iLoveIt',function (req, res) {
+    var loveFromTo = {
+        foodId : req.body.condition.foodId,
+        userId : req.body.condition.userId
+    };
+    MongoHelper.iLoveIt(loveFromTo);
+//    目前没有回调
+    res.json({praise:"success"});
+});
 
 module.exports = router;

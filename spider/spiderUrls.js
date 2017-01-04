@@ -82,6 +82,15 @@ timeUrls = {
                 }
                 break;
             }
+            default : {
+                page = this.baseURL + this.morning + '&' + 'page=' + this.morningIndex[0];
+                index = this.morningIndex[1]++;
+                if(index > 17){
+                    this.morningIndex[1]=0;
+                    this.morningIndex[0]++;
+                }
+                break;
+            }
         }
         header.url = page;
         request(header, function (err, res, body) {

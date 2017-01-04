@@ -56,18 +56,18 @@ var travel = {
 
         request.end();
     },
-    travel:function travelOne(callback) {
+    travel:function travelOne(time,callback) {
         spiderRequest(reqFoodHeader,function(err,res,body) {
             if(body !== "")console.log("获取页面成功");
             else console.log("获取页面失败");
-            resolveHtml(body,function (result) {
+            resolveHtml(time,body,function (result) {
                 callback(result);
             });
         });
     },
 };
-
-function resolveHtml(html,callback) {
+//time 用餐时间
+function resolveHtml(time,html,callback) {
 
     var imgArray = [];
     var title;
@@ -105,7 +105,7 @@ function resolveHtml(html,callback) {
     result.images = imgArray;
     result.originalURL = reqFoodHeader.url;
     //这样很危险啊，如果快了就拿不到下一个url 只好将callback 放到里面了
-    spiderUrls.nextUrl('morning',function (url) {
+    spiderUrls.nextUrl(time,function (url) {
         reqFoodHeader.url = url;
         callback(result);
     });

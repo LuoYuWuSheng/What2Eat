@@ -6,7 +6,7 @@
 $.ajax({
     type:"post",
     dataType:"html",
-    url:'/users/signup',
+    url:'/users/login',
     contentType: "application/json; charset=utf-8",
     data:JSON.stringify({user:{username:'lx',password:"lx"}}),
     success:function (data) {

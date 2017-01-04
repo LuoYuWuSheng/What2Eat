@@ -11,7 +11,7 @@ var router = express.Router();
 //获得推荐数据
 router.use('/suggest', function (req, res) {
 
-    console.log("/suggest 路径下推荐：condition ：" + JSON.stringify(req.body));
+    console.log("自定义推荐 === 原始condition ：" + JSON.stringify(req.body));
 
     var test = req.body.condition == undefined;
     var condition;
@@ -88,4 +88,13 @@ router.use('/treat', function (req, res) {
     );
 });
 
+//按照热度请求
+router.use('/heatList',function (req, res) {
+    var Filter = {
+        classify:req.body.condition.data
+    };
+    MongoHelper.topHeatList(6,Filter,function (result) {
+        res.json({foodList: result});
+    })
+});
 module.exports = router;

@@ -113,7 +113,7 @@ Condition.prototype = {
     }
     ,
     getWeatherFilter : function () {
-        //按天气推荐，目前只有季节的条件
+        //todo 加上温度 按天气推荐，目前只有季节的条件
         return {
             "tags.season":this.season,
         }

@@ -9,6 +9,7 @@ var SuggestFood = require('../model/SuggestFood');
 var dbUrl = 'mongodb://localhost:27017/what2eat';
 var MongoClient = mongdb.MongoClient;
 var User = require('../model/User');
+var ObjectID = mongdb.ObjectID;
 
 //链接数据库并存储db对象
 MongoClient.connect(dbUrl,function (err,db) {
@@ -56,7 +57,7 @@ function findSuggest(condition,callback) {
     // MongoClient.FoodsColl.find(Filter).limit(condition.wantSuggestNum).toArray()
 }
 
-//通过天气进行推荐
+//todo 通过天气进行推荐 需要加入气温的条件
 function suggestByWeather(condition,callback) {
     //只有通过强制类型转换？
     condition.prototype = Condition;
@@ -171,20 +172,22 @@ function editUserInfo(user,callback) {
 
 //上传美食，目前这个接口只有爬虫在使用
 function uploadFood(reqParam) {
-    //todo 完成格式化数据
+    //todo 完成格式化数据 需要判断复选的是不是数组，不是就创建一个数组
     var dbFood = {
         name : reqParam.name,
-        "image" : [reqParam.imageURL],
+        "image" : [reqParam.imageURL,reqParam.imageURL],
         "tags" : {
             "season" : reqParam.season,
-            "people" : reqParam.people,
+            "people" : parseInt(reqParam.people),
             "sex" : 0,
             "taste" : reqParam.taste,
             "time" : reqParam.time
         },
         "describe" : reqParam.describe,
-        "benefit" : "",
+        "benefit" : reqParam.benefit,
         "HealthCondition" : reqParam.healthCondition,
+        "classify":reqParam.classify,
+        "heat":0,
         "cookMethod" : {
             "exist" : false,
             "material" : [],
@@ -194,9 +197,29 @@ function uploadFood(reqParam) {
         }
 
     };
+    if(!Array.isArray(dbFood.tags.taste))dbFood.tags.taste = [dbFood.tags.taste];
+    if(!Array.isArray(dbFood.tags.time))dbFood.tags.time = [dbFood.tags.time];
     MongoClient.FoodsColl.updateOne({name:dbFood.name},dbFood,{upsert:true},function (err, result) {
         if(err)console.log("插入数据库出错");
     });
+}
+
+//点赞函数 目前是在食物热度增加，并记录用户的选择习惯。毕竟非关系型数据库，没有单独创建表
+function iLoveIt(loveFromTo) {
+    //没有保证事务性，因为两次更新互相独立。
+    MongoClient.FoodsColl.updateOne({_id:new ObjectID(loveFromTo.foodId)},{$inc:{heat:1}});
+    if(loveFromTo.userId!=undefined)MongoClient.usersColl.updateOne({_id:new ObjectID(loveFromTo.userId)},{$addToSet:{myLove:loveFromTo.foodId}});
+}
+
+//按照热度获取List Num 要取的个数,Filter过滤器 callback回调
+function topHeatList(Num,Filter,callback) {
+    MongoClient.FoodsColl.find(Filter).limit(Num).sort({heat:-1}).toArray(function (err, docs) {
+        var result = [];
+        for (var i=0;i<docs.length;i++){
+            result[i]=new SuggestFood(docs[i]);
+        }
+        callback(result);
+    })
 }
 
 var MongoHelper = {
@@ -210,6 +233,8 @@ var MongoHelper = {
     getUserInfo:getUserInfo,
     editUserInfo:editUserInfo,
     uploadFood:uploadFood,
+    iLoveIt:iLoveIt,
+    topHeatList:topHeatList,
 };
 
 function Random(Min,Max) {
