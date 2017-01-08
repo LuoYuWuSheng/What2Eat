@@ -47,7 +47,6 @@ var travel = {
                 callback(food);
             });
         });
-        //todo 这里估计会有问题，无论什么情况都会返回空的food
         // callback(food);
         request.on('error',function (e) {
             console.log('请求失败\n');

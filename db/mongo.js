@@ -6,7 +6,7 @@
 var mongdb = require('mongodb');
 var Condition = require('../model/Condition');
 var SuggestFood = require('../model/SuggestFood');
-var dbUrl = 'mongodb://localhost:27017/what2eat';
+var dbUrl = 'mongodb://localhost:38128/what2eat';
 var MongoClient = mongdb.MongoClient;
 var User = require('../model/User');
 var ObjectID = mongdb.ObjectID;
@@ -16,7 +16,6 @@ MongoClient.connect(dbUrl,function (err,db) {
     if(err)throw err;
     else {
         console.log('链接数据库成功');
-        //todo 这里好坑啊，到底要不要把db对象存储到全局变量中？总不能每次操作都链接一次吧！
         MongoClient.db = db;
         MongoClient.FoodsColl = db.collection('Foods');
         MongoClient.usersColl = db.collection('user');
@@ -35,8 +34,6 @@ function findSuggest(condition,callback) {
     RandomFood(condition.wantSuggestNum,Filter,function (tagsResult) {
         console.log(" 按照查找条件 : "+JSON.stringify(condition)+"  找到结果数量: "+tagsResult.length);
         result = tagsResult;
-        //数目不够想要的建议数量就随机生成
-        //todo if else 不同情况要分别callback
         if(result.length < condition.wantSuggestNum){
             //去重的过滤器
             var distincFilter = {
@@ -57,7 +54,6 @@ function findSuggest(condition,callback) {
     // MongoClient.FoodsColl.find(Filter).limit(condition.wantSuggestNum).toArray()
 }
 
-//todo 通过天气进行推荐 需要加入气温的条件
 function suggestByWeather(condition,callback) {
     //只有通过强制类型转换？
     condition.prototype = Condition;
@@ -172,7 +168,6 @@ function editUserInfo(user,callback) {
 
 //上传美食，目前这个接口只有爬虫在使用
 function uploadFood(reqParam) {
-    //todo 完成格式化数据 需要判断复选的是不是数组，不是就创建一个数组
     var dbFood = {
         name : reqParam.name,
         "image" : [reqParam.imageURL,reqParam.imageURL],

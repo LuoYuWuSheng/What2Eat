@@ -47,7 +47,6 @@ router.use('/suggest', function (req, res) {
 router.use('/weather', function (req, res) {
     var test = req.body.condition == undefined;
 
-    //todo 这里需要根据天气来搜索，目前还没有实现
     var condition = new Condition();
     condition.weather = "sunny";
     condition.wantSuggestNum = 2;
