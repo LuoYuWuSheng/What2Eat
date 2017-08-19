@@ -1,5 +1,5 @@
 # 吃啥App后台
-15年12月Weex比赛项目后台
+16年12月Weex比赛项目后台
 
 [前端源码链接](https://github.com/Lx15/EWhat-weex)
 
